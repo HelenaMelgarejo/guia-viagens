@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guia de Viagens • Sistema Completo</title>
+<link rel="stylesheet" href="./css/style.css">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#304ffe">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Viagens">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-mark">✈️</div><strong>Guia de<br>Viagens</strong></div>
+    <button class="primary" onclick="openTripModal()">＋ Nova viagem</button>
+    <nav class="nav">
+      <button class="active" data-tab="dashboard" onclick="showTab('dashboard')">⌂ Dashboard</button>
+      <button class="trip-only-nav" data-tab="hoje" onclick="showTab('hoje')">✨ Hoje</button>
+      <button class="trip-only-nav" data-tab="roteiro" onclick="showTab('roteiro')">🗓️ Roteiro</button>
+      <button class="trip-only-nav" data-tab="gastos" onclick="showTab('gastos')">💳 Gastos</button>
+      <button class="trip-only-nav" data-tab="ingressos" onclick="showTab('ingressos')">🎟️ Ingressos</button>
+      <button class="trip-only-nav" data-tab="documentos" onclick="showTab('documentos')">📄 Documentos</button>
+      <button class="trip-only-nav" data-tab="checklist" onclick="showTab('checklist')">✅ Checklist</button>
+      <button class="trip-only-nav" data-tab="moedas" onclick="showTab('moedas')">🌎 Moedas</button>
+    </nav>
+</aside>
+
+  <main class="main">
+    <div class="top clean-header">
+      <div></div>
+      <div class="search"><input id="search" placeholder="Buscar..." oninput="renderAll()" /></div>
+    </div>
+
+    <section id="dashboard" class="section active">
+      <div class="panel">
+        <div class="section-head"><h2>Minhas viagens</h2></div>
+        <div class="trips" id="trips"></div>
+      </div>
+
+      <div class="panel" id="archivedPanel" style="margin-top:18px;display:none">
+        <div class="section-head"><h2>Viagens arquivadas</h2></div>
+        <div class="trips" id="archivedTrips"></div>
+      </div>
+
+      <div class="panel" id="noTripPanel" style="margin-top:18px;display:none">
+        <div class="empty">Selecione uma viagem acima para ver roteiro, gastos, documentos, checklist e moedas.</div>
+      </div>
+
+      <div class="stats" id="dashStats">
+        <div class="stat">
+          <div class="stat-icon" data-icon="expense"></div>
+          <div><small id="spentLabel">Total gasto</small><strong id="spentTotal">R$ 0,00</strong><div class="stat-list" id="spentByCurrency"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" data-icon="saving"></div>
+          <div><small>Valor guardado</small><strong id="savedTotal">R$ 0,00</strong><div class="stat-list" id="savedByCurrency"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" data-icon="check"></div>
+          <div><small>Checklist concluído</small><strong id="checkProgressTotal">0/0</strong><div class="stat-list" id="checkProgressPill"></div></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" data-icon="calendar"></div>
+          <div><small>Dias de viagem</small><strong id="daysTotal">0</strong></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" data-icon="hourglass"></div>
+          <div><small>Faltam para viajar</small><strong id="countdownTotal">0 dias</strong></div>
+        </div>
+      </div>
+
+      <div class="grid3" id="dashDetails">
+        <div class="panel"><h3 id="eventsTitle">Próximos eventos</h3><div class="list" id="dashEvents"></div></div>
+        <div class="panel"><h3 id="expensesTitle">Últimos lançamentos</h3><div class="list" id="dashExpenses"></div></div>
+        <div class="panel"><h3 id="checksTitle">Checklist</h3><div class="list" id="dashChecks"></div></div>
+      </div>
+    </section>
+
+
+    <section id="hoje" class="section">
+      <div class="panel">
+        <div class="section-head"><h2>Hoje</h2><button class="ghost" onclick="openEventModal()">＋ Adicionar no roteiro</button></div>
+        <div class="subnote" data-trip-note></div>
+        <div id="todayHero" class="today-hero"></div>
+        <div class="grid2" style="margin-top:16px">
+          <div class="panel inner-panel"><h3>Agenda de hoje</h3><div class="list" id="todayEvents"></div></div>
+          <div class="panel inner-panel"><h3>Gastos de hoje</h3><div id="todayExpenseTotals"></div><div class="list" id="todayExpenses"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roteiro" class="section">
+      <div class="panel">
+        <div class="section-head"><h2>Roteiro</h2><button class="primary" onclick="openEventModal()">＋ Adicionar lugar</button></div>
+        <div class="subnote" data-trip-note></div>
+        <div class="list" id="eventsList"></div>
+      </div>
+    </section>
+
+    <section id="gastos" class="section">
+      <div class="grid2">
+        <div class="panel">
+          <div class="section-head"><h2>Gastos</h2><button class="primary" onclick="openExpenseModal()">＋ Adicionar gasto</button></div>
+          <div class="subnote" data-trip-note></div>
+          <div id="expenseTotals"></div>
+          <div class="list" id="expensesList"></div>
+        </div>
+        <div class="panel">
+          <div class="section-head"><h2>Valor guardado</h2><button class="primary" onclick="openSavingModal()">＋ Adicionar valor</button></div>
+          <div class="subnote" data-trip-note></div>
+          <div id="savingTotals"></div>
+          <div class="list" id="savingsList"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <div class="section-head"><h2>Cotação do dia</h2><button class="ghost" onclick="refreshRates()">Atualizar cotação</button></div>
+        <div class="subnote">Cotação online em relação ao real. Se estiver offline, o app mantém a última cotação salva.</div>
+        <div class="rate-grid" id="ratesList"></div>
+      </div>
+    </section>
+
+    <section id="ingressos" class="section">
+      <div class="panel">
+        <div class="section-head"><h2>Ingressos</h2><button class="primary" onclick="openTicketModal()">＋ Adicionar ingresso</button></div>
+        <div class="subnote" data-trip-note></div>
+        <div class="list" id="ticketsList"></div>
+      </div>
+    </section>
+
+    <section id="documentos" class="section">
+      <div class="grid2">
+        <div class="panel">
+          <div class="section-head"><h2>Documentos</h2><button class="primary" onclick="openDocModal()">＋ Adicionar documento</button></div>
+          <div class="subnote" data-trip-note></div>
+          <div class="list" id="docsList"></div>
+        </div>
+        <div class="panel">
+          <h2>Visualização</h2>
+          <p class="subnote">Abra documentos, reservas e ingressos aqui.</p>
+          <div class="preview" id="preview"><div class="empty" style="height:100%;display:grid;place-items:center">Nenhum arquivo aberto.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="checklist" class="section">
+      <div class="panel">
+        <div class="section-head"><h2>Checklist</h2><button class="primary" onclick="openCheckModal()">＋ Adicionar item</button></div>
+        <div class="subnote" data-trip-note></div>
+        <div class="list" id="checksList"></div>
+      </div>
+    </section>
+
+    <section id="moedas" class="section">
+      <div class="panel">
+        <div class="section-head"><h2>Moedas da viagem</h2></div>
+        <div class="subnote" data-trip-note></div>
+        <div class="list" id="currenciesList"></div>
+        <div class="form" style="margin-top:16px">
+          <input id="newCurCode" placeholder="Código: GBP" />
+          <input id="newCurSymbol" placeholder="Símbolo: £" />
+          <input id="newCurName" placeholder="Nome da moeda" />
+          <button class="primary" onclick="addCurrency()">＋ Incluir moeda</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+
+<script src="./js/app.js"></script>
+<button id="installAppBtn" class="install-app-btn">Instalar app</button>
+<script>
+let deferredInstallPrompt = null;
+const installBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  if (installBtn) installBtn.classList.add('show');
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installBtn.classList.remove('show');
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  if (installBtn) installBtn.classList.remove('show');
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .catch(err => console.warn('Service worker não registrado:', err));
+  });
+}
+</script>
+
+</body>
+</html>
